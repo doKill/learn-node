@@ -1,7 +1,6 @@
 var express = require('express'),
     superagent = require('superagent'),
     cheerio = require('cheerio'),
-    eventproxy = require('eventproxy'),
     async = require('async'),
     url = require('url'),
     app = express(),
@@ -23,48 +22,24 @@ superagent.get(cnodeUrl)
         });
 
 
+        //给下面控制并发连接准备的方法
         function fetchUrl(topicUrl) {
             superagent.get(topicUrl).end(function(err, res) {
-                receive([topicUrl, res.text]);
-            });
-        };
-
-
-        function receive(params) {
-            var res = params.map(function(param){
-                console.log(param.url)
-            })
-            /*prams = prams.forEach(function(topicPair) {
-                var topicUrl = topicPair[0],
-                    topicHtml = topicPair[1],
-                    $ = cheerio.load(topicHtml);
-                return ({
+                var $ = cheerio.load(res.text),
+                res =  {
                     title: $('.topic_full_title').text().trim(),
-                    href: topicUrl,
                     comment1: $('.reply_content').eq(0).text().trim(),
                     author: $('.changes a').text().trim(),
                     score: $('.floor .big').text().trim().replace('积分: ', '')
-                });
+                };
+                console.error(res)
             });
-            send(prams)
-            console.log(prams)*/
         };
 
-        async.mapLimit(topicUrls, 25, function (url, callback) {
-          fetchUrl(url, callback);
-        }, function (err, result) {
-          console.log('final:');
-          console.log(result);
+
+        async.mapLimit(topicUrls, 15, function(url) {
+            fetchUrl(url);
         });
 
     });
 
-    function send(datas) {
-        app.get('/', function(req, res) {
-            res.send(datas)
-        })
-    }
-
-app.listen(3000, function(req, res) {
-    console.log('app is running at port 3000');
-});
