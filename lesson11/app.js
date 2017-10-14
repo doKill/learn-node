@@ -1,3 +1,5 @@
+// 都是js闭包作用域之类的小问题总结
+
 var parent = function () {
     var name = "parent_name";
     var age = 13;
