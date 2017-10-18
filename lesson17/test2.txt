@@ -1,0 +1,8 @@
+i am from test2
+vi test.txt
+
+edit…
+
+esc
+
+:wq

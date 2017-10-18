@@ -1,0 +1,7 @@
+vi test.txt
+
+edit…
+
+esc
+
+:wq
